@@ -1,8 +1,12 @@
 ## Bookstore Api system 
 this system to help you to manage your bookstore by providing apis which help you to :
+
 1-add new bookstore
+
 2-update book
+
 3-delete book
+
 4-search for books by title and author name (note that author name here is optional)
 
 At first you need to   
@@ -28,8 +32,5 @@ before using this apis you need to get token first by login with this credential
 username : test
 password: 12345
 
-
-
- 
  
  
