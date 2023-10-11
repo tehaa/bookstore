@@ -12,7 +12,7 @@ At first you need to
 using mysql to create new schema with name bookstore or run `CREATE SCHEMA `bookstore` using mysql .
 
 ## import dump to schema:
-you can import book.sql dump in bookstore schema using MYSQL Workbench or import using command :
+you can import bookstore.sql dump in bookstore schema using MYSQL Workbench or import using command :
  `mysqldump -p --user=[username] bookstore < [path of dump file]`.
  
 ## Run the application
