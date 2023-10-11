@@ -1,0 +1,23 @@
+server:
+  port: ${PORT:8080}
+spring:
+  application:
+    name: Bookstore Api
+  mvc:
+    pathmatch:
+      matching-strategy: ANT_PATH_MATCHER
+  datasource:
+    url: jdbc:mysql://${DATABASE_URL:127.0.0.1:3306}/bookstore
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:eVTz24PZn!U*90w7}
+    driverClassName: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 10
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: validate
+
+jwt:
+  signingSecret: bookStore
+  expirationInSeconds: 60000000000
