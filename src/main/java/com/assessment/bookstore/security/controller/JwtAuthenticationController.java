@@ -27,7 +27,6 @@ public class JwtAuthenticationController {
     public ResponseEntity<AuthenticationResponse> createAuthenticationToken(
             @RequestBody AuthenticationRequest authenticationRequest) throws Exception {
 
-
         AuthenticationResponse authenticationResponse = authenticationService.authenticateUser(authenticationRequest);
 
         return ResponseEntity.ok(authenticationResponse);

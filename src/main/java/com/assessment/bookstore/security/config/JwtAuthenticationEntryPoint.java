@@ -22,32 +22,32 @@ import java.util.Map;
 @Component
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint, Serializable {
 
-	private static final long serialVersionUID = -5455637857154021269L;
-	private static final Logger LOGGER = LoggerFactory.getLogger(JwtAuthenticationEntryPoint.class);
+    private static final long serialVersionUID = -5455637857154021269L;
+    private static final Logger LOGGER = LoggerFactory.getLogger(JwtAuthenticationEntryPoint.class);
 
-	@Override
-	public void commence(HttpServletRequest request, HttpServletResponse response,
-			AuthenticationException authException)
+    @Override
+    public void commence(HttpServletRequest request, HttpServletResponse response,
+                         AuthenticationException authException)
 
-			throws IOException, ServletException {
+            throws IOException, ServletException {
 
-		LOGGER.error("Unauthenticated error:{}", authException.getMessage(), authException);
+        LOGGER.error("Unauthenticated error:{}", authException.getMessage(), authException);
 
-		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
-		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
-		final Map<String, Object> body = new HashMap<>();
+        final Map<String, Object> body = new HashMap<>();
 
-		body.put("status", HttpStatus.UNAUTHORIZED);
+        body.put("status", HttpStatus.UNAUTHORIZED);
 
-		body.put("message", authException.getMessage());
+        body.put("message", authException.getMessage());
 
-		body.put("timestamp", LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
+        body.put("timestamp", LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss")));
 
-		final ObjectMapper mapper = new ObjectMapper();
+        final ObjectMapper mapper = new ObjectMapper();
 
-		mapper.writeValue(response.getOutputStream(), body);
+        mapper.writeValue(response.getOutputStream(), body);
 
-	}
+    }
 }
