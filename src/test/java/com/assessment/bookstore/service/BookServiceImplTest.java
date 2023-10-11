@@ -1,6 +1,7 @@
 package com.assessment.bookstore.service;
 
 import com.assessment.bookstore.entity.Book;
+import com.assessment.bookstore.exception.BadRequestException;
 import com.assessment.bookstore.exception.ResourceNotFoundException;
 import com.assessment.bookstore.mapper.BookMapper;
 import com.assessment.bookstore.model.BookDTO;
@@ -57,8 +58,8 @@ public class BookServiceImplTest {
     }
 
     @Test
-    @DisplayName("given valid isbn when update book and book is exist then the book updated successfully")
-    void givenValidIsbnWhenUpdateBookAndBookIsExistThenTheBookUpdatedSuccessfully() {
+    @DisplayName("given valid BookDto when update book and book is exist then the book updated successfully")
+    void givenValidBookDtoWhenUpdateBookAndBookIsExistThenTheBookUpdatedSuccessfully() {
         BookDTO bookDTO = getBookDto(isbn);
         Book book = getBook(isbn);
 
@@ -76,8 +77,8 @@ public class BookServiceImplTest {
     }
 
     @Test
-    @DisplayName("given valid isbn when update book and book is Not exist then throw record not found exception")
-    void givenValidIsbnWhenUpdateBookAndBookIsNotExistThenThrowRecordNotFoundException() {
+    @DisplayName("given valid BookDto when update book and book is Not exist then throw record not found exception")
+    void givenValidBookDtoWhenUpdateBookAndBookIsNotExistThenThrowRecordNotFoundException() {
         BookDTO bookDTO = getBookDto(isbn);
         when(bookServiceHelper.isBookPresent(isbn)).thenReturn(false);
 
@@ -87,5 +88,34 @@ public class BookServiceImplTest {
         verify(bookRepo, times(0)).save(any());
     }
 
+    @Test
+    @DisplayName("given valid BookDto when add book and book isbn is exist then throw bad request exception")
+    void givenValidBookDtoWhenAddBookAndBookISExistThenThrowException(){
+        BookDTO bookDTO = getBookDto(isbn);
+        when(bookServiceHelper.isBookNotPresent(isbn)).thenReturn(false);
 
+        assertThrows(BadRequestException.class, () -> classUnderTest.addNewBook(bookDTO));
+
+        verify(bookServiceHelper, times(1)).isBookNotPresent(isbn);
+        verify(bookRepo, times(0)).save(any());
+    }
+
+    @Test
+    @DisplayName("given valid BookDto when add book and book is not exist then the book added successfully")
+    void givenValidBookDtoWhenAddBookAndBookIsNotExistThenTheBookUpdatedSuccessfully() {
+        BookDTO bookDTO = getBookDto(isbn);
+        Book book = getBook(isbn);
+
+        when(bookServiceHelper.isBookNotPresent(isbn)).thenReturn(true);
+        when(bookMapper.toBook(bookDTO)).thenReturn(book);
+        when(bookRepo.save(book)).thenReturn(book);
+        when(bookMapper.toBookDTO(book)).thenReturn(bookDTO);
+
+        BookDTO response = classUnderTest.addNewBook(bookDTO);
+
+        assertNotNull(response);
+        Assertions.assertEquals(book.getIsbn(), response.getIsbn());
+        verify(bookServiceHelper, times(1)).isBookNotPresent(isbn);
+        verify(bookRepo, times(1)).save(book);
+    }
 }
