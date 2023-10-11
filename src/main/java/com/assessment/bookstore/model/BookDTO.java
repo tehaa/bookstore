@@ -1,20 +1,22 @@
 package com.assessment.bookstore.model;
 
+import javax.validation.constraints.NotBlank;
 import java.util.Set;
 
 public class BookDTO {
 
+    @NotBlank()
     private String isbn;
 
     private String title;
 
-    private int year;
+    private Integer year;
 
     private String genre;
 
     private Set<AuthorDTO> authors;
 
-    private double price;
+    private Double price;
 
     public String getIsbn() {
         return isbn;
@@ -32,15 +34,6 @@ public class BookDTO {
         this.title = title;
     }
 
-    public int getYear() {
-        return year;
-    }
-
-    public void setYear(int year) {
-        this.year = year;
-    }
-
-
     public String getGenre() {
         return genre;
     }
@@ -57,11 +50,19 @@ public class BookDTO {
         this.authors = authors;
     }
 
-    public double getPrice() {
+    public Integer getYear() {
+        return year;
+    }
+
+    public void setYear(Integer year) {
+        this.year = year;
+    }
+
+    public Double getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(Double price) {
         this.price = price;
     }
 

@@ -16,13 +16,13 @@ public class Book {
     private String title;
 
     @Column(name = "year")
-    private int year;
+    private Integer year;
 
     @Column(name = "genre")
     private String genre;
 
     @Column(name = "price")
-    private double price;
+    private Double price;
 
     @ManyToMany(fetch = FetchType.EAGER,
             cascade = {
@@ -56,12 +56,20 @@ public class Book {
         this.title = title;
     }
 
-    public int getYear() {
+    public Integer getYear() {
         return year;
     }
 
-    public void setYear(int year) {
+    public void setYear(Integer year) {
         this.year = year;
+    }
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
     }
 
     public String getGenre() {
@@ -70,14 +78,6 @@ public class Book {
 
     public void setGenre(String genre) {
         this.genre = genre;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
     }
 
     public Set<Author> getAuthors() {

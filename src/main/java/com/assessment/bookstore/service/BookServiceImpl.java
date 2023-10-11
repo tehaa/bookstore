@@ -51,7 +51,7 @@ public class BookServiceImpl implements BookService {
     public BookDTO addNewBook(BookDTO bookDTO) {
         String methodName = " addNewBook()";
         logInfo(CLASS_NAME, methodName, LOG_METHOD_ENTRY);
-        if (Objects.nonNull(bookDTO.getIsbn()) && bookServiceHelper.isBookNotPresent(bookDTO.getIsbn())) {
+        if (bookServiceHelper.isBookNotPresent(bookDTO.getIsbn())) {
             Book book = bookMapper.toBook(bookDTO);
             logInfo(CLASS_NAME, methodName, LOG_METHOD_EXIT);
             return bookMapper.toBookDTO(bookRepo.save(book));
@@ -65,7 +65,7 @@ public class BookServiceImpl implements BookService {
     public BookDTO updateBook(BookDTO bookDTO) {
         String methodName = " addNewBook()";
         logInfo(CLASS_NAME, methodName, LOG_METHOD_ENTRY);
-        if (Objects.nonNull(bookDTO.getIsbn()) && bookServiceHelper.isBookPresent(bookDTO.getIsbn())) {
+        if (bookServiceHelper.isBookPresent(bookDTO.getIsbn())) {
             Book book = bookMapper.toBook(bookDTO);
             logInfo(CLASS_NAME, methodName, LOG_METHOD_EXIT);
             return bookMapper.toBookDTO(bookRepo.save(book));

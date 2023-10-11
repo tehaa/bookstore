@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 import static com.assessment.bookstore.helper.LoggingHelperService.logInfo;
@@ -41,7 +42,7 @@ public class BookController {
 
     @ApiOperation(value = "adding a new book")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<BookDTO> addNewBook(@RequestBody BookDTO bookDTO) {
+    public ResponseEntity<BookDTO> addNewBook(@RequestBody @Valid BookDTO bookDTO) {
         String methodName = " addNewBook()";
         logInfo(CLASS_NAME, methodName, LOG_METHOD_ENTRY);
         BookDTO response = bookService.addNewBook(bookDTO);
@@ -51,7 +52,7 @@ public class BookController {
 
     @ApiOperation(value = "updating book")
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<BookDTO> updateBook(@RequestBody BookDTO bookDTO) {
+    public ResponseEntity<BookDTO> updateBook(@RequestBody @Valid BookDTO bookDTO) {
         String methodName = " updateBook()";
         logInfo(CLASS_NAME, methodName, LOG_METHOD_ENTRY);
         BookDTO response = bookService.updateBook(bookDTO);
