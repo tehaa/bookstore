@@ -19,7 +19,7 @@ import static com.assessment.bookstore.util.Constants.*;
 
 @Service
 public class BookServiceImpl implements BookService {
-    public static final String CLASS_NAME = BookController.class.getName();
+    public static final String CLASS_NAME = BookServiceImpl.class.getName();
 
     private final BookRepo bookRepo;
 
@@ -71,7 +71,7 @@ public class BookServiceImpl implements BookService {
             return bookMapper.toBookDTO(bookRepo.save(book));
         } else {
             logInfo(CLASS_NAME, methodName, LOG_METHOD_EXIT);
-            throw new BadRequestException("can't able to add book with invalid data");
+            throw new ResourceNotFoundException(Book.class.getName(), ISBN_FIELD_VALUE, bookDTO.getIsbn());
         }
     }
 

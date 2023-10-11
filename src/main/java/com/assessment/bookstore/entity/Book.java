@@ -40,6 +40,9 @@ public class Book {
     )
     Set<Author> authors = new HashSet<Author>();
 
+    public Book() {
+    }
+
     public String getIsbn() {
         return isbn;
     }
