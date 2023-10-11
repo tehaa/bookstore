@@ -28,9 +28,9 @@ public class BookController {
     }
 
     @ApiOperation(value = "Get book by title and author")
-    @GetMapping(value = "/titleAndAuthor", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<BookDTO>> getBooksByTitleAndAuthor(@RequestParam String title,
-                                                            @RequestParam String authorName) {
+                                                                  @RequestParam(required = false) String authorName) {
         String methodName = " getBooksByTitleAndAuthor()";
         logInfo(CLASS_NAME, methodName, LOG_METHOD_ENTRY);
         List<BookDTO> response = bookService.getBooksByTitleAndAuthor(title, authorName);
@@ -38,16 +38,6 @@ public class BookController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @ApiOperation(value = "Get book by title or author")
-    @GetMapping(value = "/titleOrAuthor", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<BookDTO>> getBooksByTitleOrAuthor(@RequestParam String title,
-                                                           @RequestParam String authorName) {
-        String methodName = " getBooksByTitleAndAuthor()";
-        logInfo(CLASS_NAME, methodName, LOG_METHOD_ENTRY);
-        List<BookDTO> response = bookService.getBooksByTitleOrAuthor(title, authorName);
-        logInfo(CLASS_NAME, methodName, LOG_METHOD_EXIT);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
 
     @ApiOperation(value = "adding a new book")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

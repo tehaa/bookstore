@@ -125,7 +125,7 @@ public class JwtTokenUtil {
 	public String getUsernameFromAuthorizationHeader(String authorizationHeader) {
 
 		String username = null;
-		String jwtToken = null;
+		String jwtToken;
 
 		if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
 
@@ -135,19 +135,19 @@ public class JwtTokenUtil {
 
 				username = getUsernameFromToken(jwtToken);
 
-				LOGGER.debug("-----> Received a valid token from username:{}", username);
+				LOGGER.debug("Received a valid token from username:{}", username);
 
 			} catch (IllegalArgumentException e) {
 
-				LOGGER.warn("-----> Unable to get JWT Token", e);
+				LOGGER.warn("Unable to get JWT Token", e);
 
 			} catch (ExpiredJwtException e) {
 
-				LOGGER.warn("-----> JWT Token has expired", e);
+				LOGGER.warn("JWT Token has expired", e);
 
 			}
 		} else {
-//			LOGGER.warn("JWT Token does not begin with Bearer String");
+			LOGGER.warn("JWT Token does not begin with Bearer String");
 		}
 
 		return username;

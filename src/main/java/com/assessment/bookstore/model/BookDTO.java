@@ -14,6 +14,8 @@ public class BookDTO {
 
     private Set<AuthorDTO> authors;
 
+    private double price;
+
     public String getIsbn() {
         return isbn;
     }
@@ -53,6 +55,14 @@ public class BookDTO {
 
     public void setAuthors(Set<AuthorDTO> authors) {
         this.authors = authors;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
     }
 
     @Override

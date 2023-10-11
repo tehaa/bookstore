@@ -9,8 +9,6 @@ public interface BookService {
 
     List<BookDTO> getBooksByTitleAndAuthor(String title, String authorName);
 
-    List<BookDTO> getBooksByTitleOrAuthor(String title, String authorName);
-
     BookDTO addNewBook(BookDTO bookDTO);
 
     BookDTO updateBook(BookDTO bookDTO);

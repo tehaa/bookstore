@@ -7,11 +7,12 @@ import com.assessment.bookstore.exception.ResourceNotFoundException;
 import com.assessment.bookstore.mapper.BookMapper;
 import com.assessment.bookstore.model.BookDTO;
 import com.assessment.bookstore.repo.BookRepo;
+import com.assessment.bookstore.service.helper.BookServiceHelper;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 import static com.assessment.bookstore.helper.LoggingHelperService.logInfo;
 import static com.assessment.bookstore.util.Constants.*;
@@ -24,25 +25,24 @@ public class BookServiceImpl implements BookService {
 
     private final BookMapper bookMapper;
 
-    public BookServiceImpl(BookRepo bookRepo, BookMapper bookMapper) {
+    private final BookServiceHelper bookServiceHelper;
+
+    public BookServiceImpl(BookRepo bookRepo, BookMapper bookMapper, BookServiceHelper bookServiceHelper) {
         this.bookRepo = bookRepo;
         this.bookMapper = bookMapper;
+        this.bookServiceHelper = bookServiceHelper;
     }
 
     @Override
     public List<BookDTO> getBooksByTitleAndAuthor(String title, String authorName) {
         String methodName = " getBooksByTitleAndAuthor()";
         logInfo(CLASS_NAME, methodName, LOG_METHOD_ENTRY);
-        List<Book> books = bookRepo.findByAuthorsNameAndTitle(authorName, title);
-        logInfo(CLASS_NAME, methodName, LOG_METHOD_EXIT);
-        return bookMapper.toBookDtos(books);
-    }
-
-    @Override
-    public List<BookDTO> getBooksByTitleOrAuthor(String title, String authorName) {
-        String methodName = " getBooksByTitleOrAuthor()";
-        logInfo(CLASS_NAME, methodName, LOG_METHOD_ENTRY);
-        List<Book> books = bookRepo.findByAuthorsNameOrTitle(authorName, title);
+        List<Book> books;
+        if (Objects.nonNull(authorName)) {
+            books = bookRepo.findByAuthorsNameAndTitle(authorName, title);
+        } else {
+            books = bookRepo.findByTitle(title);
+        }
         logInfo(CLASS_NAME, methodName, LOG_METHOD_EXIT);
         return bookMapper.toBookDtos(books);
     }
@@ -51,7 +51,7 @@ public class BookServiceImpl implements BookService {
     public BookDTO addNewBook(BookDTO bookDTO) {
         String methodName = " addNewBook()";
         logInfo(CLASS_NAME, methodName, LOG_METHOD_ENTRY);
-        if (Objects.nonNull(bookDTO.getIsbn()) && isBookNotPresent(bookDTO.getIsbn())) {
+        if (Objects.nonNull(bookDTO.getIsbn()) && bookServiceHelper.isBookNotPresent(bookDTO.getIsbn())) {
             Book book = bookMapper.toBook(bookDTO);
             logInfo(CLASS_NAME, methodName, LOG_METHOD_EXIT);
             return bookMapper.toBookDTO(bookRepo.save(book));
@@ -65,7 +65,7 @@ public class BookServiceImpl implements BookService {
     public BookDTO updateBook(BookDTO bookDTO) {
         String methodName = " addNewBook()";
         logInfo(CLASS_NAME, methodName, LOG_METHOD_ENTRY);
-        if (Objects.nonNull(bookDTO.getIsbn()) && isBookPresent(bookDTO.getIsbn())) {
+        if (Objects.nonNull(bookDTO.getIsbn()) && bookServiceHelper.isBookPresent(bookDTO.getIsbn())) {
             Book book = bookMapper.toBook(bookDTO);
             logInfo(CLASS_NAME, methodName, LOG_METHOD_EXIT);
             return bookMapper.toBookDTO(bookRepo.save(book));
@@ -79,21 +79,12 @@ public class BookServiceImpl implements BookService {
     public void deleteBook(String isbn) {
         String methodName = " deleteBook()";
         logInfo(CLASS_NAME, methodName, LOG_METHOD_ENTRY);
-        if (isBookPresent(isbn)) {
+        if (bookServiceHelper.isBookPresent(isbn)) {
             bookRepo.deleteById(isbn);
         } else {
             throw new ResourceNotFoundException(Book.class.getName(), ISBN_FIELD_VALUE, isbn);
         }
         logInfo(CLASS_NAME, methodName, LOG_METHOD_EXIT);
-    }
-
-    private boolean isBookPresent(String isbn) {
-        Optional<Book> bookOptional = bookRepo.findById(isbn);
-        return bookOptional.isPresent();
-    }
-
-    private boolean isBookNotPresent(String isbn) {
-        return !isBookPresent(isbn);
     }
 
 }

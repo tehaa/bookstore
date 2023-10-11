@@ -21,13 +21,15 @@ public class Book {
     @Column(name = "genre")
     private String genre;
 
-
+    @Column(name = "price")
+    private double price;
 
     @ManyToMany(fetch = FetchType.EAGER,
             cascade = {
                     CascadeType.PERSIST,
                     CascadeType.MERGE
-            })    @JoinTable(
+            })
+    @JoinTable(
             name = "bookauthor",
             joinColumns = @JoinColumn(
                     name = "book_isbn", referencedColumnName = "isbn"
@@ -68,6 +70,14 @@ public class Book {
 
     public void setGenre(String genre) {
         this.genre = genre;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
     }
 
     public Set<Author> getAuthors() {
