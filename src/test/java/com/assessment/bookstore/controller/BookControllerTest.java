@@ -1,23 +1,29 @@
 package com.assessment.bookstore.controller;
 
 import com.assessment.bookstore.BookStoreApplication;
+import com.assessment.bookstore.exception.BadRequestException;
 import com.assessment.bookstore.exception.ResourceNotFoundException;
 import com.assessment.bookstore.exception.RestResponseEntityExceptionHandler;
+import com.assessment.bookstore.model.BookDTO;
 import com.assessment.bookstore.service.BookService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static com.assessment.bookstore.constant.ApiEndpoints.BOOK_CONTROLLER_BASE_URL;
+import static com.assessment.bookstore.fixture.BookFixture.getBookDto;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -68,6 +74,34 @@ public class BookControllerTest {
     void givenValidIsbnWhenWithInvalidRoleThenStatusIsForbidden() throws Exception {
         mockMvc.perform(delete(BOOK_CONTROLLER_BASE_URL + "/" + isbn))
                 .andExpect(status().isForbidden());
+
+    }
+
+    @Test
+    @DisplayName("given a valid book dto when add book return created")
+    void givenValidBookWhenAddBookSuccessfullyThenResponseCreatedIsReturned() throws Exception {
+        BookDTO bookDTO = getBookDto(isbn);
+        ObjectMapper mapper = new ObjectMapper();
+        String requestBody = mapper.writeValueAsString(bookDTO);
+        when(bookService.addNewBook(bookDTO)).thenReturn(bookDTO);
+        mockMvc.perform(post(BOOK_CONTROLLER_BASE_URL)
+                        .content(requestBody)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated());
+
+    }
+
+    @Test
+    @DisplayName("given a valid book dto when add book return book is created before then return bad request response")
+    void givenValidBookWhenAddBookReturnBadRequestExceptionThenReturnBadRequestStatusCode() throws Exception {
+        BookDTO bookDTO = getBookDto(isbn);
+        ObjectMapper mapper = new ObjectMapper();
+        String requestBody = mapper.writeValueAsString(bookDTO);
+        doThrow(new BadRequestException("record added before")).when(bookService).addNewBook(any());
+        mockMvc.perform(post(BOOK_CONTROLLER_BASE_URL)
+                        .content(requestBody)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
 
     }
 
