@@ -33,6 +33,7 @@ java -jar target/book-store-0.0.1-SNAPSHOT.jar > bookstore.log &
 2-get token from auth api using this credentials
  
 username : test
+
 password: 12345
 
 3- start using the apis
