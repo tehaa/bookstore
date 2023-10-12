@@ -57,7 +57,7 @@ public class BookServiceImpl implements BookService {
             return bookMapper.toBookDTO(bookRepo.save(book));
         } else {
             logInfo(CLASS_NAME, methodName, LOG_METHOD_EXIT);
-            throw new BadRequestException("can't able to add book with invalid data");
+            throw new BadRequestException("Book with this isbn already added");
         }
     }
 
