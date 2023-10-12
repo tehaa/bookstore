@@ -15,12 +15,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import static com.assessment.bookstore.fixture.BookFixture.getBook;
 import static com.assessment.bookstore.fixture.BookFixture.getBookDto;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.times;
 
 @ExtendWith(MockitoExtension.class)
 public class BookServiceImplTest {
@@ -73,6 +75,8 @@ public class BookServiceImplTest {
         assertNotNull(response);
         Assertions.assertEquals(book.getIsbn(), response.getIsbn());
         verify(bookServiceHelper, times(1)).isBookPresent(isbn);
+        verify(bookMapper, times(1)).toBook(bookDTO);
+        verify(bookMapper, times(1)).toBookDTO(book);
         verify(bookRepo, times(1)).save(book);
     }
 
@@ -90,7 +94,7 @@ public class BookServiceImplTest {
 
     @Test
     @DisplayName("given valid BookDto when add book and book isbn is exist then throw bad request exception")
-    void givenValidBookDtoWhenAddBookAndBookISExistThenThrowException(){
+    void givenValidBookDtoWhenAddBookAndBookISExistThenThrowException() {
         BookDTO bookDTO = getBookDto(isbn);
         when(bookServiceHelper.isBookNotPresent(isbn)).thenReturn(false);
 
@@ -114,8 +118,65 @@ public class BookServiceImplTest {
         BookDTO response = classUnderTest.addNewBook(bookDTO);
 
         assertNotNull(response);
-        Assertions.assertEquals(book.getIsbn(), response.getIsbn());
+        verify(bookMapper, times(1)).toBook(bookDTO);
+        verify(bookMapper, times(1)).toBookDTO(book);
+        Assertions.assertEquals(bookDTO, response);
         verify(bookServiceHelper, times(1)).isBookNotPresent(isbn);
         verify(bookRepo, times(1)).save(book);
     }
+
+    @Test
+    @DisplayName("given title and author name when get books by title and author name and books are exist then the books returned successfully")
+    void givenTitleAndAuthorNameWhenGetBooksThenBooksReturnedByTitleAndAuthorName() {
+        String title = "bookTitleTest";
+        String authorName = "authorNameTest";
+        List<Book> books = Collections.singletonList(getBook(isbn));
+        List<BookDTO> bookDTOList = Collections.singletonList(getBookDto(isbn));
+
+        when(bookRepo.findByAuthorsNameAndTitle(authorName, title)).thenReturn(books);
+        when(bookMapper.toBookDtos(books)).thenReturn(bookDTOList);
+
+        List<BookDTO> response = classUnderTest.getBooksByTitleAndAuthor(title, authorName);
+        assertNotNull(response);
+        Assertions.assertEquals(bookDTOList, response);
+        verify(bookRepo, times(1)).findByAuthorsNameAndTitle(authorName, title);
+        verify(bookRepo, times(0)).findByTitle(title);
+
+    }
+
+    @Test
+    @DisplayName("given title and author name when get books by title and author name and books are not exist then return empty list")
+    void givenTitleAndAuthorNameWhenGetBooksAndBooksNotExistThenEmptyListReturned() {
+        String title = "bookTitleTest";
+        String authorName = "authorNameTest";
+
+        when(bookRepo.findByAuthorsNameAndTitle(authorName, title)).thenReturn(new ArrayList<>());
+
+        List<BookDTO> response = classUnderTest.getBooksByTitleAndAuthor(title, authorName);
+        assertNotNull(response);
+        assertEquals(0, response.size());
+        verify(bookRepo, times(1)).findByAuthorsNameAndTitle(authorName, title);
+        verify(bookRepo, times(0)).findByTitle(title);
+
+    }
+
+    @Test
+    @DisplayName("given title e when get books by title and author name and books  not exist then return  list")
+    void givenTitleWhenGetBooksAndBooksExistThenBooksReturnedByTitleAndAuthorName() {
+        String title = "bookTitleTest";
+        List<Book> books = Collections.singletonList(getBook(isbn));
+        List<BookDTO> bookDTOList = Collections.singletonList(getBookDto(isbn));
+
+        when(bookRepo.findByTitle(title)).thenReturn(books);
+        when(bookMapper.toBookDtos(books)).thenReturn(bookDTOList);
+
+        List<BookDTO> response = classUnderTest.getBooksByTitleAndAuthor(title, null);
+        assertNotNull(response);
+        Assertions.assertEquals(bookDTOList, response);
+        verify(bookRepo, times(0)).findByAuthorsNameAndTitle(any(), eq(title));
+        verify(bookRepo, times(1)).findByTitle(title);
+
+    }
+
+
 }
